@@ -31,6 +31,7 @@
 import threading
 import SimpleHTTPServer
 import SocketServer
+import time
 
 TEMPLATE = u"""
 <!DOCTYPE html>
@@ -57,6 +58,12 @@ TEMPLATE = u"""
       </div>
     </div>
     <script type="text/javascript">
+
+var eventSource = new EventSource("/new");
+eventSource.onmessage = function(event) {
+    event.data;
+};
+
 function setzoom() {
     var s = Number(document.getElementById("zoom").value);
     if (isNaN(s)  ||  s <= 0) {
@@ -166,6 +173,14 @@ class HTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(TEMPLATE.encode("utf-8"))
+        elif self.path == "/new":
+            self.send_response(200)
+            self.send_header("Content-type", "text/event-stream")
+            self.end_headers()
+            while True:
+                self.wfile.write("data: blah\n\n")
+                self.wfile.flush()
+                time.sleep(1)
 
 httpd = SocketServer.TCPServer(("", 0), HTTPHandler)
 
