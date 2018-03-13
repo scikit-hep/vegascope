@@ -28,12 +28,162 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import threading
+import errno
+import json
 import SimpleHTTPServer
+import socket
 import SocketServer
+import sys
+import threading
 import time
 
-TEMPLATE = u"""
+if sys.version_info[0] < 3:
+    string_types = (unicode, str)
+else:
+    string_types = (str, bytes)
+
+class Canvas(object):
+    def __init__(self, title=None, initial=None, bind="localhost", port=0):
+        if title is None:
+            self.title = "VegaScope"
+        else:
+            self.title = title
+
+        if initial is None:
+            self(Canvas._default)
+        else:
+            self(initial)
+
+        canvas = self
+
+        class FakeFile(object):
+            @property
+            def closed(self):
+                return True
+            def close(self):
+                pass
+            def flush(self):
+                pass
+
+        class HTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+            def do_GET(self):
+                if self.path == "/":
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/html")
+                    self.end_headers()
+                    page = canvas._template.replace("VEGAVIEW", "#vegaview").replace("TITLE", canvas.title).replace("SPEC", canvas.spec).encode("utf-8")
+                    self.wfile.write(page)
+                    
+                elif self.path == "/new":
+                    self.send_response(200)
+                    self.send_header("Content-type", "text/event-stream")
+                    self.end_headers()
+                    spec = canvas.spec
+                    try:
+                        while not self.wfile.closed:
+                            time.sleep(0.1)
+                            if spec != canvas.spec:
+                                spec = canvas.spec
+                                self.wfile.write("data: {0}\n\n".format(spec))
+                            else:
+                                self.wfile.write(":\n\n")
+                            self.wfile.flush()
+                    except socket.error as err:
+                        if err[0] == errno.EPIPE:
+                            self.wfile = FakeFile()
+                        else:
+                            raise
+
+        self.httpd = SocketServer.ThreadingTCPServer((bind, port), HTTPHandler)
+        self.host, self.port = self.httpd.server_address
+
+        self.thread = threading.Thread(name=self.title, target=self.httpd.serve_forever)
+        self.thread.daemon = True
+        self.thread.start()
+
+    def __call__(self, spec):
+        if isinstance(spec, string_types):
+            self.spec = json.dumps(json.loads(spec))   # make sure it's a one-liner
+        else:
+            self.spec = json.dumps(spec)
+
+    def __del__(self):
+        self.httpd.shutdown()
+        self.httpd.server_close()
+
+    @property
+    def hostname(self):
+        if self.host == "localhost" or self.host == "127.0.0.1":
+            return "localhost"
+
+        if self.host != "0.0.0.0":
+            return self.host
+
+        hostname = socket.gethostname()
+        if hostname != "localhost":
+            return hostname
+
+        ip = socket.gethostbyname(hostname)
+        if ip != "127.0.0.1":
+            return ip
+
+        try:
+            test = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            test.connect(("8.8.8.8", 80))   # Google
+            return test.getsockname()[0]
+        finally:
+            test.close()
+
+    @property
+    def address(self):
+        return "http://{0}:{1}".format(self.hostname, self.port)
+
+    _default = {
+        "$schema": "https://vega.github.io/schema/vega/v3.json",
+        "width": 200,
+        "height": 200,
+
+        "data": [
+          {
+            "name": "table",
+            "values": [20, 10, 20],
+            "transform": [{"type": "pie", "field": "data"}]
+          }
+        ],
+
+        "scales": [
+          {
+            "name": "r",
+            "type": "sqrt",
+            "domain": {"data": "table", "field": "data"},
+            "zero": True,
+            "range": [20, 100]
+          }
+        ],
+
+        "marks": [
+          {
+            "type": "arc",
+            "from": {"data": "table"},
+            "encode": {
+              "enter": {
+                "x": {"field": {"group": "width"}, "mult": 0.5},
+                "y": {"field": {"group": "height"}, "mult": 0.5},
+                "startAngle": {"field": "startAngle"},
+                "endAngle": {"field": "endAngle"},
+                "innerRadius": {"value": 20},
+                "outerRadius": {"scale": "r", "field": "data"},
+                "stroke": {"value": "white"}
+              },
+              "update": {
+                "fill": {"value": "lightgray"}
+              }
+            }
+          }
+        ]
+    }
+    
+    _template = u"""
 <!DOCTYPE html>
 <html>
   <head>
@@ -61,7 +211,7 @@ TEMPLATE = u"""
 
 var eventSource = new EventSource("/new");
 eventSource.onmessage = function(event) {
-    event.data;
+    alert(event.data);
 };
 
 function setzoom() {
@@ -91,51 +241,7 @@ document.getElementById("zoom").addEventListener("keyup", function(event) {
 });
 
 var title = "TITLE";
-
-var spec = {
-  "$schema": "https://vega.github.io/schema/vega/v3.json",
-  "width": 200,
-  "height": 200,
-
-  "data": [
-    {
-      "name": "table",
-      "values": [20, 10, 20],
-      "transform": [{"type": "pie", "field": "data"}]
-    }
-  ],
-
-  "scales": [
-    {
-      "name": "r",
-      "type": "sqrt",
-      "domain": {"data": "table", "field": "data"},
-      "zero": true,
-      "range": [20, 100]
-    }
-  ],
-
-  "marks": [
-    {
-      "type": "arc",
-      "from": {"data": "table"},
-      "encode": {
-        "enter": {
-          "x": {"field": {"group": "width"}, "mult": 0.5},
-          "y": {"field": {"group": "height"}, "mult": 0.5},
-          "startAngle": {"field": "startAngle"},
-          "endAngle": {"field": "endAngle"},
-          "innerRadius": {"value": 20},
-          "outerRadius": {"scale": "r", "field": "data"},
-          "stroke": {"value": "white"}
-        },
-        "update": {
-          "fill": {"value": "lightgray"}
-        }
-      }
-    }
-  ]
-};
+var spec = SPEC;
 
 var view = new vega.View(vega.parse(spec)).renderer("svg").initialize("VEGAVIEW").run();
 
@@ -163,27 +269,3 @@ document.getElementById("svg").addEventListener("click", function(event) {
   </body>
 </html>
 """
-
-TEMPLATE = TEMPLATE.replace("VEGAVIEW", "#vegaview")
-
-class HTTPHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == "/":
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            self.wfile.write(TEMPLATE.encode("utf-8"))
-        elif self.path == "/new":
-            self.send_response(200)
-            self.send_header("Content-type", "text/event-stream")
-            self.end_headers()
-            while True:
-                self.wfile.write("data: blah\n\n")
-                self.wfile.flush()
-                time.sleep(1)
-
-httpd = SocketServer.TCPServer(("", 0), HTTPHandler)
-
-print httpd.socket.getsockname()
-
-httpd.serve_forever()
