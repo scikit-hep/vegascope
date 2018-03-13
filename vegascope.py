@@ -140,14 +140,6 @@ class Canvas(object):
         if self.host != "0.0.0.0":
             return self.host
 
-        hostname = socket.gethostname()
-        if hostname != "localhost":
-            return hostname
-
-        ip = socket.gethostbyname(hostname)
-        if ip != "127.0.0.1":
-            return ip
-
         try:
             test = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             test.connect(("8.8.8.8", 80))   # Google
