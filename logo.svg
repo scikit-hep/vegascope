@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   class="marks"
+   width="200"
+   height="200"
+   viewBox="0 0 200 200"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/pivarski/diana/vegascope/logo200.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata26">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs24" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="908"
+     inkscape:window-height="1027"
+     id="namedview22"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="3.3209393"
+     inkscape:cx="103.02339"
+     inkscape:cy="100.5"
+     inkscape:window-x="1006"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <g
+     transform="translate(0.47280983,0)"
+     id="g4">
+    <g
+       class="mark-group role-frame root"
+       id="g6">
+      <g
+         id="g8">
+        <path
+           class="background"
+           d="M 0,0 H 200 V 200 H 0 z"
+           style="fill:none"
+           id="path10"
+           inkscape:connector-curvature="0" />
+        <g
+           id="g12">
+          <g
+             class="mark-arc role-mark"
+             id="g14">
+            <path
+               transform="translate(100,100)"
+               d="M 0,-100 A 100,100 0 0 1 58.778525,80.901699 L 11.755705,16.18034 A 20,20 0 0 0 0,-20 z"
+               style="fill:#d3d3d3;stroke:#ffffff"
+               id="path16"
+               inkscape:connector-curvature="0" />
+            <path
+               transform="translate(100,100)"
+               d="m 45.00586,61.945252 a 76.568542,76.568542 0 0 1 -90.01172,0 L -11.755705,16.18034 a 20,20 0 0 0 23.51141,0 z"
+               style="fill:#d3d3d3;stroke:#ffffff"
+               id="path18"
+               inkscape:connector-curvature="0" />
+            <path
+               transform="translate(100,100)"
+               d="M -58.778525,80.901699 A 100,100 0 0 1 0,-100 l 0,80 a 20,20 0 0 0 -11.755705,36.18034 z"
+               style="fill:#d3d3d3;stroke:#ffffff"
+               id="path20"
+               inkscape:connector-curvature="0" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
