@@ -30,6 +30,7 @@
 
 import errno
 import json
+import random
 import socket
 import sys
 import threading
@@ -38,11 +39,13 @@ import time
 if sys.version_info[0] < 3:
     import SimpleHTTPServer
     import SocketServer
+    from urllib2 import urlopen
     string_types = (unicode, str)
     class BrokenPipeError(Exception): pass
 else:
     import http.server as SimpleHTTPServer
     import socketserver as SocketServer
+    from urllib.request import urlopen
     string_types = (str, bytes)
 
 class Canvas(object):
@@ -133,23 +136,13 @@ class Canvas(object):
             self.close()
 
     @property
-    def hostname(self):
-        if self.host == "localhost" or self.host == "127.0.0.1":
-            return "localhost"
-
-        if self.host != "0.0.0.0":
-            return self.host
-
-        try:
-            test = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            test.connect(("8.8.8.8", 80))   # Google
-            return test.getsockname()[0]
-        finally:
-            test.close()
+    def external_ip(self):
+        service = random.choice(["https://v4.ident.me", "https://api.ipify.org", "https://diagnostic.opendns.com/myip", "https://wtfismyip.com/text"])
+        return urlopen(service).read().strip()
 
     @property
     def address(self):
-        return "http://{0}:{1}".format(self.hostname, self.port)
+        return "http://{0}:{1}".format(self.external_ip, self.port)
 
     _default = {
         "$schema": "https://vega.github.io/schema/vega/v3.json",
