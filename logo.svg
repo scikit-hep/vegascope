@@ -8,16 +8,16 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    class="marks"
-   width="200"
-   height="200"
-   viewBox="0 0 200 200"
+   width="205"
+   height="205"
+   viewBox="0 0 205 205"
    version="1.1"
    id="svg2"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/pivarski/diana/vegascope/logo200.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/pivarski/diana/vegascope/logo.png"
+   inkscape:export-xdpi="87.800003"
+   inkscape:export-ydpi="87.800003">
   <metadata
      id="metadata26">
     <rdf:RDF>
@@ -45,19 +45,15 @@
      inkscape:window-height="1027"
      id="namedview22"
      showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
      inkscape:zoom="3.3209393"
-     inkscape:cx="103.02339"
-     inkscape:cy="100.5"
+     inkscape:cx="102.79537"
+     inkscape:cy="83.801787"
      inkscape:window-x="1006"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <g
-     transform="translate(0.47280983,0)"
+     transform="translate(2.8067178,2.8921626)"
      id="g4">
     <g
        class="mark-group role-frame root"
@@ -78,19 +74,19 @@
             <path
                transform="translate(100,100)"
                d="M 0,-100 A 100,100 0 0 1 58.778525,80.901699 L 11.755705,16.18034 A 20,20 0 0 0 0,-20 z"
-               style="fill:#d3d3d3;stroke:#ffffff"
+               style="fill:#ffcc00;stroke:#888888"
                id="path16"
                inkscape:connector-curvature="0" />
             <path
                transform="translate(100,100)"
                d="m 45.00586,61.945252 a 76.568542,76.568542 0 0 1 -90.01172,0 L -11.755705,16.18034 a 20,20 0 0 0 23.51141,0 z"
-               style="fill:#d3d3d3;stroke:#ffffff"
+               style="fill:#ffcc00;stroke:#888888"
                id="path18"
                inkscape:connector-curvature="0" />
             <path
                transform="translate(100,100)"
                d="M -58.778525,80.901699 A 100,100 0 0 1 0,-100 l 0,80 a 20,20 0 0 0 -11.755705,36.18034 z"
-               style="fill:#d3d3d3;stroke:#ffffff"
+               style="fill:#ffcc00;stroke:#888888"
                id="path20"
                inkscape:connector-curvature="0" />
           </g>
