@@ -137,8 +137,10 @@ class Canvas(object):
 
     @property
     def external_ip(self):
-        service = random.choice(["https://v4.ident.me", "https://api.ipify.org", "https://diagnostic.opendns.com/myip", "https://wtfismyip.com/text"])
-        return urlopen(service).read().strip()
+        service = random.choice(["https://v4.ident.me", "https://api.ipify.org"])
+        print ("using", service)
+
+        return urlopen(service).read().decode("ascii").strip()
 
     @property
     def address(self):
