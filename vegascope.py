@@ -30,7 +30,6 @@
 
 import errno
 import json
-import random
 import socket
 import sys
 import threading
@@ -137,10 +136,7 @@ class Canvas(object):
 
     @property
     def external_ip(self):
-        service = random.choice(["https://v4.ident.me", "https://api.ipify.org"])
-        print ("using", service)
-
-        return urlopen(service).read().decode("ascii").strip()
+        return urlopen("https://v4.ident.me").read().decode("ascii").strip()
 
     @property
     def address(self):
