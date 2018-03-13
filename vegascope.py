@@ -30,16 +30,19 @@
 
 import errno
 import json
-import SimpleHTTPServer
 import socket
-import SocketServer
 import sys
 import threading
 import time
 
 if sys.version_info[0] < 3:
+    import SimpleHTTPServer
+    import SocketServer
     string_types = (unicode, str)
+    class BrokenPipeError(Exception): pass
 else:
+    import http.server as SimpleHTTPServer
+    import socketserver as SocketServer
     string_types = (str, bytes)
 
 class Canvas(object):
@@ -82,14 +85,17 @@ class Canvas(object):
                     try:
                         while not self.wfile.closed:
                             time.sleep(0.1)
-                            if spec != canvas.spec:
+                            if canvas.spec is None:
+                                break
+                            elif spec != canvas.spec:
                                 spec = canvas.spec
-                                self.wfile.write("data: {0}\n\n".format(spec))
+                                self.wfile.write("data: {0}\n\n".format(spec).encode("utf-8"))
                             else:
-                                self.wfile.write(":\n\n")
+                                self.wfile.write(":\n\n".encode("utf-8"))
                             self.wfile.flush()
+
                     except socket.error as err:
-                        if err[0] == errno.EPIPE:
+                        if isinstance(err, BrokenPipeError) or err[0] == errno.EPIPE:
                             self.wfile = FakeFile()
                         else:
                             raise
@@ -107,9 +113,13 @@ class Canvas(object):
         else:
             self.spec = json.dumps(spec)
 
-    def __del__(self):
+    def close(self):
+        self.spec = None
         self.httpd.shutdown()
         self.httpd.server_close()
+
+    def __del__(self):
+        self.close()
 
     @property
     def hostname(self):
