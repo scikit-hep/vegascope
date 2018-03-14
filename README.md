@@ -21,6 +21,7 @@ Suppose that we have a process that generates Vega graphics, such as [PdVega](ht
 >>> import pdvega
 >>> stocks = data.stocks(pivoted=True)
 >>> stocks.vgplot.line().spec
+{'selection': {'grid': {'bind': 'scales', 'type': 'interval'}}, 'encoding': {'y': {'field': 'value', 'type': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'color': {'field': 'variable', 'type': 'nominal'}}, 'height': 300, 'width': 450, '$schema': 'https://vega.github.io/schema/vega-lite/v2.json', 'mark': 'line', 'data': {'values': [{'date': '2000-01-01', 'variable': 'AAPL', 'value': 25.94}, {'date': '2000-02-01', 'variable': 'AAPL', 'value': 28.66}, {'date': '2000-03-01', 'variable':
 ```
 
 this `stocks.vgplot.line().spec` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
@@ -66,4 +67,4 @@ Or a JSON string:
 >>> canvas(graphic)
 ```
 
-Or a JSON object as nested Python dicts.
+Or a JSON object as nested Python dicts. It can be 
