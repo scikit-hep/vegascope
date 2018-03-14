@@ -50,7 +50,7 @@ else:
     unicode = str
 
 class Canvas(object):
-    def __init__(self, title=None, initial=None, host="0.0.0.0", port=0):
+    def __init__(self, title=None, initial=None, host="0.0.0.0", port=0, verbose=True):
         if title is None:
             self._title = "VegaScope"
         else:
@@ -94,6 +94,12 @@ class Canvas(object):
                     self.send_response(200)
                     self.send_header("Content-type", "text/event-stream")
                     self.end_headers()
+                    client = self.client_address[0]
+                    canvas._connected.add(client)
+                    if canvas.verbose:
+                        sys.stdout.write("{0} (re)joined\n".format(client))
+                        sys.stdout.flush()
+
                     title = canvas._title
                     spec = canvas._spec
                     try:
@@ -108,12 +114,18 @@ class Canvas(object):
                             else:
                                 self.wfile.write(":\n\n".encode("utf-8"))
                             self.wfile.flush()
-
+                            
                     except socket.error as err:
                         if isinstance(err, BrokenPipeError) or err[0] == errno.EPIPE:
                             self.wfile = FakeFile()
                         else:
                             raise
+
+                    finally:
+                        canvas._connected.discard(client)
+                        if canvas.verbose:
+                            sys.stdout.write("{0} left\n".format(client))
+                            sys.stdout.flush()
 
                 elif self.path == "/vega.min.js":
                     self.send_response(200)
@@ -133,12 +145,24 @@ class Canvas(object):
                     self.end_headers()
                     self.wfile.write(canvas._vegaembed)
 
+            def log_request(self, code="-", size="-"):
+                pass
+
+            def log_error(self, format, *args):
+                pass
+
+            def log_message(self, format, *args):
+                pass
+
         self._httpd = SocketServer.ThreadingTCPServer((host, port), HTTPHandler)
         self._host, self._port = self._httpd.server_address
 
         self._thread = threading.Thread(name=self._title, target=self._httpd.serve_forever)
         self._thread.daemon = True
         self._thread.start()
+
+        self.verbose = verbose
+        self._connected = set()
 
     @property
     def title(self):
@@ -190,8 +214,9 @@ class Canvas(object):
 
     def close(self):
         self._spec = None
-        self._httpd.shutdown()
-        self._httpd.server_close()
+        if hasattr(self, "_httpd"):
+            self._httpd.shutdown()
+            self._httpd.server_close()
 
     @property
     def closed(self):
@@ -296,6 +321,7 @@ Canvas._template = u"""
         </div>
       </div>
     </div>
+    <div id="screen" style="position: fixed; padding: 0; margin: 0; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.0);"></div>
     <script type="text/javascript">
 
 function setzoom() {
@@ -359,11 +385,21 @@ document.getElementById("svg").addEventListener("click", function(event) {
 });
 
 var eventSource = new EventSource("/update");
+
 eventSource.onmessage = function(event) {
     var data = JSON.parse(event.data);
     title = data["title"];
     document.getElementById("title").innerHTML = title;
     setspec(data["spec"]);
+    document.getElementById("screen").style.background = "rgba(255, 255, 255, 0.0)";
+};
+
+eventSource.onerror = function(event) {
+    document.getElementById("screen").style.background = "rgba(255, 255, 255, 0.75)";
+};
+
+eventSource.onopen = function() {
+    document.getElementById("screen").style.background = "rgba(255, 255, 255, 0.0)";
 };
 
     </script>
