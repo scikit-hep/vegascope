@@ -9,6 +9,9 @@ VegaScope
 >>> import pdvega
 >>> stocks = data.stocks(pivoted=True)
 >>> stocks
+```
+
+```
 symbol        AAPL    AMZN    GOOG     IBM   MSFT
 date
 2000-01-01   25.94   64.56     NaN  100.52  39.81
@@ -20,7 +23,9 @@ date
 2010-03-01  223.02  128.82  560.19  125.55  28.80
 
 [123 rows x 5 columns]
+```
 
+```python
 >>> import vegascope
 >>> c = vegascope.LocalCanvas()
 Point web browser at: http://localhost:40142
