@@ -98,9 +98,9 @@ You may want to save images programmatically (in a loop, for instance), so the V
 >>> canvas.svg(graphic, title="filename")   # saves filename.svg
 ```
 
-However, your web browser will probably interpret this as a pop-up. You usually don't want web servers to save files on your disk! In most web browsers, an indicator appears in the location bar the first time you try to write a file programmatically; select it and allow pop-ups for this server.
+However, your web browser will probably interpret this as a pop-up. You usually don't want web servers to remotely write files to your disk! In most web browsers, an indicator appears in the location bar the first time you try to write a file programmatically; select it and allow pop-ups for this server.
 
-**Hint:** your web browser will remember the setting if you always use the same port number.
+**Hint:** your web browser will remember the setting if you always use the same port number:
 
 ```python
 >>> canvas = vegascope.LocalCanvas(port=12345)
@@ -109,4 +109,32 @@ However, your web browser will probably interpret this as a pop-up. You usually 
 Remote viewing
 --------------
 
+All of the examples above used `vegascope.LocalCanvas`. To make the web server visible to the world, create a `vegascope.Canvas`.
 
+```python
+>>> canvas = vegascope.Canvas()
+Point web browser at: http://8.8.8.8:50060
+```
+
+where `8.8.8.8` is the real IP address of the machine running VegaScope. Everything proceeds as before except that the web browser is no longer restricted to the same machine as the server.
+
+However, the connection may be blocked at any step between the server and the client. Most system administrators block all ports except a list of justified exceptions; you may need to ask for a port to be opened and explicitly pass that port.
+
+```python
+>>> canvas = vegascope.Canvas(port=12345)
+Point web browser at: http://8.8.8.8:12345
+```
+
+Even beyond port blocking, some administrators may block the HTTP protocol, since web servers can be used for less benign activities than plotting. They may cite a security risk in projecting your data to anyone with the address (though you can monitor who's watching with `canvas.connections`). It depends on the sensitivity of your data.
+
+If an unrestricted web server is not an option for you, but ssh is (after all, how are you connecting to the machine's terminal?), consider `vegascope.TunnelCanvas`.
+
+```python
+>>> canvas = vegascope.TunnelCanvas()
+Type into terminal:   ssh -L 43213:localhost:43213 username@8.8.8.8
+Point web browser at: http://localhost:43213
+```
+
+The TunnelCanvas is only available locally, but you can extend the meaning of "local" through an ssh tunnel. Assuming that you're already connected to the remote machine through one ssh terminal, open another terminal and paste the new ssh command into it. As long as that second terminal is open, your local web browser will see `http://localhost:43213` as the remote one.
+
+Whereas `vegascope.Canvas` is world-readable, `vegascope.TunnelCanvas` is as safe as ssh. Choose the option that best fits your security constraints.
