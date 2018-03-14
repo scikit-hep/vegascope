@@ -50,14 +50,14 @@ else:
 class Canvas(object):
     def __init__(self, title=None, initial=None, bind="localhost", port=0):
         if title is None:
-            self.title = "VegaScope"
+            self._title = "VegaScope"
         else:
-            self.title = title
+            self._title = title
 
         if initial is None:
-            self(Canvas._default)
+            self.spec = Canvas._default
         else:
-            self(initial)
+            self.spec = initial
 
         canvas = self
 
@@ -76,7 +76,7 @@ class Canvas(object):
                     self.send_response(200)
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
-                    page = canvas._template.replace("VEGAVIEW", "#vegaview").replace("TITLE", canvas.title).replace("SPEC", canvas.spec).encode("utf-8")
+                    page = canvas._template.replace("VEGAVIEW", "#vegaview").replace("TITLE", canvas._title).replace("SPEC", canvas._spec).encode("utf-8")
                     self.wfile.write(page)
 
                 elif self.path == "/favicon.ico":
@@ -89,15 +89,17 @@ class Canvas(object):
                     self.send_response(200)
                     self.send_header("Content-type", "text/event-stream")
                     self.end_headers()
-                    spec = canvas.spec
+                    title = canvas._title
+                    spec = canvas._spec
                     try:
                         while not self.wfile.closed:
                             time.sleep(0.1)
-                            if canvas.spec is None:
+                            if canvas._spec is None:
                                 break
-                            elif spec != canvas.spec:
-                                spec = canvas.spec
-                                self.wfile.write("data: {0}\n\n".format(spec).encode("utf-8"))
+                            elif spec != canvas._spec or title != canvas._title:
+                                spec = canvas._spec
+                                title = canvas._title
+                                self.wfile.write("data: {{\"title\": {0}, \"spec\": {1}}}\n\n".format(json.dumps(title), spec).encode("utf-8"))
                             else:
                                 self.wfile.write(":\n\n".encode("utf-8"))
                             self.wfile.flush()
@@ -108,39 +110,82 @@ class Canvas(object):
                         else:
                             raise
 
-        self.httpd = SocketServer.ThreadingTCPServer((bind, port), HTTPHandler)
-        self.host, self.port = self.httpd.server_address
+        self._httpd = SocketServer.ThreadingTCPServer((bind, port), HTTPHandler)
+        self._host, self._port = self._httpd.server_address
+        self._bind = bind
 
-        self.thread = threading.Thread(name=self.title, target=self.httpd.serve_forever)
-        self.thread.daemon = True
-        self.thread.start()
+        self._thread = threading.Thread(name=self._title, target=self._httpd.serve_forever)
+        self._thread.daemon = True
+        self._thread.start()
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        if (sys.version_info[0] < 3 and isinstance(value, (unicode, str))) or isinstance(value, str):
+            self._title = value
+        else:
+            raise TypeError("title must be a string")
+
+    @property
+    def spec(self):
+        return self._spec
+
+    @spec.setter
+    def spec(self, value):
+        if isinstance(value, string_types):
+            self._spec = json.dumps(json.loads(value))   # make sure it's a one-liner
+        else:
+            self._spec = json.dumps(value)
 
     def __call__(self, spec):
-        if isinstance(spec, string_types):
-            self.spec = json.dumps(json.loads(spec))   # make sure it's a one-liner
-        else:
-            self.spec = json.dumps(spec)
+        self.spec = spec
+
+    @property
+    def httpd(self):
+        return self._httpd
+
+    @property
+    def host(self):
+        return self._host
+
+    @property
+    def port(self):
+        return self._port
+
+    @property
+    def bind(self):
+        return self._bind
+
+    @property
+    def thread(self):
+        return self._thread
 
     def close(self):
-        self.spec = None
-        self.httpd.shutdown()
-        self.httpd.server_close()
+        self._spec = None
+        self._httpd.shutdown()
+        self._httpd.server_close()
 
     @property
     def closed(self):
-        return self.spec is None
+        return self._spec is None
 
     def __del__(self):
         if not self.closed:
             self.close()
 
     @property
-    def external_ip(self):
-        return urlopen("https://v4.ident.me").read().decode("ascii").strip()
+    def ip(self):
+        if self._bind == "localhost" or self._bind == "127.0.0.1":
+            return "127.0.0.1"
+        else:
+            return urlopen("https://v4.ident.me").read().decode("ascii").strip()
 
     @property
     def address(self):
-        return "http://{0}:{1}".format(self.external_ip, self.port)
+        return "http://{0}:{1}".format(self.ip, self._port)
 
     _default = {
         "$schema": "https://vega.github.io/schema/vega/v3.json",
@@ -239,10 +284,8 @@ document.getElementById("zoom").addEventListener("keyup", function(event) {
     }
 });
 
-var title = "TITLE";
-var spec = SPEC;
-
-var view = new vega.View(vega.parse(spec)).renderer("svg").initialize("VEGAVIEW").run();
+var title = document.getElementById("title").innerHTML;
+var view = new vega.View(vega.parse(SPEC)).renderer("svg").initialize("VEGAVIEW").run();
 
 document.getElementById("png").addEventListener("click", function(event) {
     view.toImageURL("png").then(function(url) {
@@ -266,8 +309,10 @@ document.getElementById("svg").addEventListener("click", function(event) {
 
 var eventSource = new EventSource("/update");
 eventSource.onmessage = function(event) {
-    var spec = JSON.parse(event.data);
-    view = new vega.View(vega.parse(spec)).renderer("svg").initialize("VEGAVIEW").run();
+    var data = JSON.parse(event.data);
+    title = data["title"];
+    document.getElementById("title").innerHTML = title;
+    view = new vega.View(vega.parse(data["spec"])).renderer("svg").initialize("VEGAVIEW").run();
 };
 
     </script>
