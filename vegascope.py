@@ -315,8 +315,8 @@ eventSource.onmessage = function(event) {
         return urlopen("https://v4.ident.me").read().decode("ascii").strip()
 
 class LocalCanvas(Canvas):
-    def __init__(self, title=None, initial=None, host="", port=0):
-        super(LocalCanvas, self).__init__(title=title, initial=initial, host=host, port=port)
+    def __init__(self, title=None, initial=None, port=0):
+        super(LocalCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port)
 
     @property
     def ip(self):
