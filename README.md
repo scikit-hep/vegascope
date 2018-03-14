@@ -82,11 +82,11 @@ Interactive features
 
 In addition to any interactivity the Vega graphic may have on its own, VegaScope has five features:
 
-   - *Save as PNG:* create a PNG image in your downloads folder (file name is the current title + `.png`).
-   - *Save as SVG:* create a SVG image in your downloads folder (ending in `.svg`). SVG files can be edited as vector graphics (you can move the data points around, add annotations) and converted losslessly to sharp PDFs. My favorite tool for editing SVG and converting to PDF is [Inkscape](https://inkscape.org/).
-   - *Zoom buttons/box:* scale the graphic on the web page. Does not affect saved file size.
-   - *View source:* to see the raw JSON.
-   - *View in editor:* to edit and view the graphic in the official [Vega editor](https://vega.github.io/editor). This editor gives you a lot of insight into how Vega declarations translate into graphics, but it's not optimal for rapid-fire plotting.
+   - **Save as PNG:** create a PNG image in your downloads folder (file name is the current title + `.png`).
+   - **Save as SVG:** create a SVG image in your downloads folder (ending in `.svg`). SVG files can be edited as vector graphics (you can move the data points around, add annotations) and converted losslessly to sharp PDFs. My favorite tool for editing SVG and converting to PDF is [Inkscape](https://inkscape.org/).
+   - **Zoom buttons/box:** scale the graphic on the web page. Does not affect saved file size.
+   - **View source:** to see the raw JSON.
+   - **View in editor:** to edit and view the graphic in the official [Vega editor](https://vega.github.io/editor). This editor gives you a lot of insight into how Vega declarations translate into graphics, but it's not optimal for rapid-fire plotting.
 
 You may want to save graphics programmatically (in a loop, for instance), so the VegaScope canvas has methods for invoking this from the server:
 
@@ -97,7 +97,7 @@ You may want to save graphics programmatically (in a loop, for instance), so the
 
 However, your web browser will probably interpret this as a pop-up. You usually don't want web servers to save files on your disk! In most web browsers, an indicator appears in the location bar the first time you try to write a file programmatically; select it and allow pop-ups for this server.
 
-*Hint:* your web browser will remember the setting if you always use the same port number.
+**Hint:** your web browser will remember the setting if you always use the same port number.
 
 ```python
 >>> canvas = vegascope.LocalCanvas(port=12345)
