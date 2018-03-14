@@ -50,6 +50,28 @@ else:
     unicode = str
 
 class Canvas(object):
+    """A general Vega canvas that can be viewed anywhere on the internet.
+
+    Args:
+        title (string or None): title for this canvas, can be changed, used as a file name for saved graphics.
+        initial (string, dict, or None; URL or JSON): first Vega graphic to display, defaults to logo.
+        host (string): host name to bind to, default is "0.0.0.0" for any address.
+        port (integer): port to bind to, default is 0 for any open port.
+        verbose (boolean): if True (default), print messages when web browsers connect or disconnect.
+
+    Attributes:
+        connection (dict): web browser URL and possibly terminal command (for TunnelCanvas).
+        title (string): current title.
+        spec (string or dict; URL or JSON): current Vega graphic.
+        httpd (socketserver.ThreadingTCPServer): web server object.
+        ip (string): IP address of server as seen from outside ("localhost" for LocalCanvas and TunnelCanvas).
+        host (string): actual host used by web server.
+        port (string): actual port used by web server.
+        thread (threading.Thread): thread in which the web server is running.
+        connected (list of strings): currently connected web browser clients.
+        closed (boolean): True if the server has shut down, False otherwise.
+    """
+
     def __init__(self, title=None, initial=None, host="0.0.0.0", port=0, verbose=True):
         self._lock = threading.Lock()
 
@@ -102,7 +124,7 @@ class Canvas(object):
                     client = self.client_address[0]
                     canvas._connected.add(client)
                     if canvas.verbose:
-                        sys.stdout.write("{0} joined\n".format(client))
+                        sys.stdout.write("{0} connected\n".format(client))
                         sys.stdout.flush()
 
                     title = canvas._title
@@ -132,7 +154,7 @@ class Canvas(object):
                     finally:
                         canvas._connected.discard(client)
                         if canvas.verbose:
-                            sys.stdout.write("{0} left\n".format(client))
+                            sys.stdout.write("{0} disconnected\n".format(client))
                             sys.stdout.flush()
 
                 elif self.path == "/vega.min.js":
@@ -172,6 +194,9 @@ class Canvas(object):
         self.verbose = verbose
         self._connected = set()
 
+        if self.verbose:
+            self.how()
+
     @property
     def title(self):
         return self._title
@@ -189,13 +214,37 @@ class Canvas(object):
         self._specify(None, value, None)
 
     def __call__(self, spec):
+        """Update the Vega graphic to spec (string or dict; URL or JSON).
+        """
         self._specify(None, spec, None)
 
     def png(self, spec, title=None):
+        """Update the Vega graphic to spec, optionally set a title, and make connected web clients save the image as PNG.
+
+        Note that pop-up blockers won't let remote servers save files on your computer without your permission. You will probably have to respond to the pop-up blocker's notice to enable pop-ups and try again (once per host/port combination).
+
+        This method blocks until the PNG request has been sent, so it can be called in a loop to make lots of files.
+
+        Args:
+            spec (string or dict; URL or JSON): new Vega graphic.
+            title (string or None): new title.
+        """
         self._specify(title, spec, "png")
         self._actionevent.wait()
 
     def svg(self, spec, title=None):
+        """Update the Vega graphic to spec, optionally set a title, and make connected web clients save the image as SVG.
+
+        Note that pop-up blockers won't let remote servers save files on your computer without your permission. You will probably have to respond to the pop-up blocker's notice to enable pop-ups and try again (once per host/port combination).
+
+        This method blocks until the SVG request has been sent, so it can be called in a loop to make lots of files.
+
+        SVG files can be converted into clean, rescalable PDFs.
+
+        Args:
+            spec (string or dict; URL or JSON): new Vega graphic.
+            title (string or None): new title.
+        """
         self._specify(title, spec, "svg")
         self._actionevent.wait()
 
@@ -238,8 +287,14 @@ class Canvas(object):
     @property
     def thread(self):
         return self._thread
-    
+
+    @property
+    def connected(self):
+        return sorted(self._connected)
+
     def close(self):
+        """Shut down the web server, disconnecting all client browsers.
+        """
         self._spec = None
         if hasattr(self, "_httpd"):
             self._httpd.shutdown()
@@ -261,14 +316,29 @@ class Canvas(object):
             self.close()
 
     @property
-    def connect(self):
-        return "Web browser: http://{0}:{1}".format(self.ip, self._port)
+    def connection(self):
+        return {"browser": "http://{ip}:{port}".format(ip=self.ip, port=self._port)}
 
+    def how(self):
+        """Print instructions for connecting to the web server.
+
+        Called automatically by the constructor unless verbose=False.
+        """
+        connection = self.connection
+        if "terminal" in connection:
+            sys.stdout.write("Type into terminal:   " + connection["terminal"] + "\n")
+        sys.stdout.write("Point web browser at: " + connection["browser"] + "\n")
+        sys.stdout.flush()
+        
     @property
     def ip(self):
         return urlopen("https://v4.ident.me").read().decode("ascii").strip()
 
 class LocalCanvas(Canvas):
+    """A Vega canvas that can only be viewed by the machine on which it is running.
+    """
+    __doc__ += "\n".join(Canvas.__doc__.split("\n")[1:])
+
     def __init__(self, title=None, initial=None, port=0):
         super(LocalCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port)
 
@@ -277,12 +347,17 @@ class LocalCanvas(Canvas):
         return "localhost"
 
 class TunnelCanvas(Canvas):
+    """A Vega canvas that can only be viewed by the machine on which it is running or through an ssh tunnel.
+    """
+    __doc__ += "\n".join(Canvas.__doc__.split("\n")[1:])
+
     def __init__(self, title=None, initial=None, port=0):
         super(TunnelCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port)
 
     @property
-    def connect(self):
-        return "Terminal:    ssh -L {port}:localhost:{port} {user}@{ip}\nWeb browser: http://localhost:{port}".format(port=self._port, user=getpass.getuser(), ip=self.ip)
+    def connection(self):
+        return {"terminal": "ssh -L {port}:localhost:{port} {user}@{ip}".format(port=self._port, user=getpass.getuser(), ip=self.ip),
+                "browser": "http://localhost:{port}".format(port=self._port)}
 
 Canvas._default = {
     "$schema": "https://vega.github.io/schema/vega/v3.json",
