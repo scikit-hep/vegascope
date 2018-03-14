@@ -48,7 +48,7 @@ else:
     string_types = (str, bytes)
 
 class Canvas(object):
-    def __init__(self, title=None, initial=None, host="", port=0):
+    def __init__(self, title=None, initial=None, host="0.0.0.0", port=0):
         if title is None:
             self._title = "VegaScope"
         else:
