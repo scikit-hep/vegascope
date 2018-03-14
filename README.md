@@ -9,7 +9,7 @@ VegaScope has zero dependencies and can be installed as a single file.
 pip install vegascope
 ```
 
-or copy `vegascope.py` to the desired location.
+or copy [vegascope.py](https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py) to the desired location.
 
 Example
 -------
