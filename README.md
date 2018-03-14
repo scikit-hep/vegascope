@@ -14,7 +14,7 @@ or copy `vegascope.py` to the desired location.
 Example
 -------
 
-Suppose that we have a process that generates Vega graphics, such as [PdVega](https://jakevdp.github.io/pdvega/) (requires pip packages `pdvega` and `vega_datasets`):
+Suppose that we have a process that generates Vega graphics, such as [PdVega](https://jakevdp.github.io/pdvega/) (example requires pip packages `pdvega` and `vega_datasets`):
 
 ```python
 >>> from vega_datasets import data
@@ -30,7 +30,7 @@ pe': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'color': {'fie
 ...
 ```
 
-this `stocks.vgplot.line().spec` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
+This `stocks.vgplot.line().spec` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
 
 Import `vegascope` and create a `LocalCanvas`. It prompts you with a URL to copy into your web browser. Every time the canvas is called as a function on a Vega graphic, the web page will be updated with the latest plot. There is no need to refresh your browser.
 
@@ -73,4 +73,35 @@ Or a JSON string:
 >>> canvas(graphic)
 ```
 
-Or a JSON object as nested Python dicts. It can be 
+Or a JSON object as nested Python dicts. It supports the Vega 3 and Vega-Lite 2 specifications.
+
+Interactive features
+--------------------
+
+In addition to any interactivity the Vega graphic may have on its own, VegaScope has five features:
+
+   - *Save as PNG:* create a PNG image in your downloads folder (file name is the current title + `.png`).
+   - *Save as SVG:* create a SVG image in your downloads folder (ending in `.svg`). SVG files can be edited as vector graphics (you can move the data points around, add annotations) and converted losslessly to sharp PDFs. My favorite tool for editing SVG and converting to PDF is [Inkscape](https://inkscape.org/).
+   - *Zoom buttons/box:* scale the graphic on the web page. Does not affect saved file size.
+   - *View source:* to see the raw JSON.
+   - *View in editor:* to edit and view the graphic in the official [Vega editor](https://vega.github.io/editor). This editor gives you a lot of insight into how Vega declarations translate into graphics, but it's not optimal for rapid-fire plotting.
+
+You may want to save graphics programmatically (in a loop, for instance), so the VegaScope canvas has methods for invoking this from the server:
+
+```python
+>>> canvas.png(graphic, title="filename")   # saves filename.png
+>>> canvas.svg(graphic, title="filename")   # saves filename.svg
+```
+
+However, your web browser will probably interpret this as a pop-up. You usually don't want web servers to save files on your disk! In most web browsers, an indicator appears in the location bar the first time you try to write a file programmatically; select it and allow pop-ups for this server.
+
+*Hint:* your web browser will remember the setting if you always use the same port number.
+
+```python
+>>> canvas = vegascope.LocalCanvas(port=12345)
+```
+
+Remote viewing
+--------------
+
+
