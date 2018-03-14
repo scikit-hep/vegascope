@@ -51,6 +51,8 @@ else:
 
 class Canvas(object):
     def __init__(self, title=None, initial=None, host="0.0.0.0", port=0, verbose=True):
+        self._lock = threading.Lock()
+
         if title is None:
             self._title = "VegaScope"
         else:
@@ -60,6 +62,9 @@ class Canvas(object):
             self.spec = Canvas._default
         else:
             self.spec = initial
+
+        self._action = None
+        self._actionevent = threading.Event()
 
         canvas = self
 
@@ -105,14 +110,17 @@ class Canvas(object):
                     try:
                         while not self.wfile.closed:
                             time.sleep(0.1)
-                            if canvas._spec is None:
-                                break
-                            elif spec != canvas._spec or title != canvas._title:
-                                spec = canvas._spec
-                                title = canvas._title
-                                self.wfile.write("data: {{\"title\": {0}, \"spec\": {1}}}\n\n".format(json.dumps(title), spec).encode("utf-8"))
-                            else:
-                                self.wfile.write(":\n\n".encode("utf-8"))
+                            with canvas._lock:
+                                if canvas._spec is None:
+                                    break
+                                elif spec != canvas._spec or title != canvas._title or canvas._action is not None:
+                                    spec = canvas._spec
+                                    title = canvas._title
+                                    self.wfile.write(b"data: " + json.dumps({"title": title, "spec": json.loads(spec), "action": canvas._action}).encode("utf-8") + b"\n\n")
+                                    canvas._action = None
+                                    canvas._actionevent.set()
+                                else:
+                                    self.wfile.write(":\n\n".encode("utf-8"))
                             self.wfile.flush()
                             
                     except socket.error as err:
@@ -170,10 +178,7 @@ class Canvas(object):
 
     @title.setter
     def title(self, value):
-        if isinstance(value, (unicode, str)):
-            self._title = value
-        else:
-            raise TypeError("title must be a string")
+        self._specify(value, None, None)
 
     @property
     def spec(self):
@@ -181,20 +186,42 @@ class Canvas(object):
 
     @spec.setter
     def spec(self, value):
-        if isinstance(value, bytes):
-            value = value.decode("utf-8")
-
-        if isinstance(value, (unicode, str)):
-            p = urlparse(value)
-            if p.scheme != "":
-                self._spec = json.dumps(value)                # value is a URL; wrap it with quotes for JSON
-            else:
-                self._spec = json.dumps(json.loads(value))    # not a URL; ensure that it's JSON and a one-liner
-        else:
-            self._spec = json.dumps(value)                    # value is an object; encode it as JSON
+        self._specify(None, value, None)
 
     def __call__(self, spec):
-        self.spec = spec
+        self._specify(None, spec, None)
+
+    def png(self, spec, title=None):
+        self._specify(title, spec, "png")
+        self._actionevent.wait()
+
+    def svg(self, spec, title=None):
+        self._specify(title, spec, "svg")
+        self._actionevent.wait()
+
+    def _specify(self, title, spec, action):
+        with self._lock:
+            if title is not None:
+                if isinstance(title, (unicode, str)):
+                    self._title = title
+                else:
+                    raise TypeError("title must be a string")
+
+            if spec is not None:
+                if isinstance(spec, bytes):
+                    spec = spec.decode("utf-8")
+
+                if isinstance(spec, (unicode, str)):
+                    p = urlparse(spec)
+                    if p.scheme != "":
+                        self._spec = json.dumps(spec)                # spec is a URL; wrap it with quotes for JSON
+                    else:
+                        self._spec = json.dumps(json.loads(spec))    # not a URL; ensure that it's JSON and a one-liner
+                else:
+                    self._spec = json.dumps(spec)                    # spec is an object; encode it as JSON
+
+            if action is not None:
+                self._action = action
 
     @property
     def httpd(self):
@@ -211,7 +238,7 @@ class Canvas(object):
     @property
     def thread(self):
         return self._thread
-
+    
     def close(self):
         self._spec = None
         if hasattr(self, "_httpd"):
@@ -379,7 +406,7 @@ function setspec(x) {
 
 setspec(SPEC);
 
-document.getElementById("png").addEventListener("click", function(event) {
+function savePNG(event) {
     view.toImageURL("png").then(function(url) {
         var link = document.createElement("a");
         link.setAttribute("href", url);
@@ -387,9 +414,11 @@ document.getElementById("png").addEventListener("click", function(event) {
         link.setAttribute("download", title + ".png");
         link.dispatchEvent(new MouseEvent("click"));
     }).catch(function(error) { alert(error); });
-});
+}
 
-document.getElementById("svg").addEventListener("click", function(event) {
+document.getElementById("png").addEventListener("click", savePNG);
+
+function saveSVG(event) {
     view.toImageURL("svg").then(function(url) {
         var link = document.createElement("a");
         link.setAttribute("href", url);
@@ -397,7 +426,9 @@ document.getElementById("svg").addEventListener("click", function(event) {
         link.setAttribute("download", title + ".svg");
         link.dispatchEvent(new MouseEvent("click"));
     }).catch(function(error) { alert(error); });
-});
+}
+
+document.getElementById("svg").addEventListener("click", saveSVG);
 
 document.getElementById("source").addEventListener("click", function(event) {
     var w = window.open("");
@@ -434,11 +465,17 @@ document.getElementById("editor").addEventListener("click", function(event) {
 var eventSource = new EventSource("/update");
 
 eventSource.onmessage = function(event) {
+    document.getElementById("screen").style.background = "rgba(255, 255, 255, 0.0)";
     var data = JSON.parse(event.data);
     title = data["title"];
     document.getElementById("title").innerHTML = title;
     setspec(data["spec"]);
-    document.getElementById("screen").style.background = "rgba(255, 255, 255, 0.0)";
+    if (data["action"] == "png") {
+        savePNG(null);
+    }
+    if (data["action"] == "svg") {
+        saveSVG(null);
+    }
 };
 
 eventSource.onerror = function(event) {
