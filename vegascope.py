@@ -29,6 +29,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import errno
+import getpass
 import json
 import socket
 import sys
@@ -172,8 +173,8 @@ class Canvas(object):
             self.close()
 
     @property
-    def address(self):
-        return "http://{0}:{1}".format(self.ip, self._port)
+    def connect(self):
+        return "Web browser: http://{0}:{1}".format(self.ip, self._port)
 
     _default = {
         "$schema": "https://vega.github.io/schema/vega/v3.json",
@@ -225,7 +226,9 @@ class Canvas(object):
 <html>
   <head>
     <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/vega@3.2.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega@3.2.1/build/vega.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@2.3.1/build/vega-lite.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.2.0/build/vega-embed.js"></script>
     <title id="title">TITLE</title>
   </head>
   <body>
@@ -273,7 +276,7 @@ document.getElementById("zoom").addEventListener("keyup", function(event) {
 });
 
 var title = document.getElementById("title").innerHTML;
-var view = new vega.View(vega.parse(SPEC)).renderer("svg").initialize("VEGAVIEW").run();
+var view = vegaEmbed("VEGAVIEW", SPEC);
 
 document.getElementById("png").addEventListener("click", function(event) {
     view.toImageURL("png").then(function(url) {
@@ -321,3 +324,11 @@ class LocalCanvas(Canvas):
     @property
     def ip(self):
         return "localhost"
+
+class TunnelCanvas(Canvas):
+    def __init__(self, title=None, initial=None, port=0):
+        super(TunnelCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port)
+
+    @property
+    def connect(self):
+        return "Terminal: ssh -L {port}:localhost:{port} {user}@{ip}\nWeb browser: http://localhost:{port}".format(port=self._port, user=getpass.getuser(), ip=self.ip)
