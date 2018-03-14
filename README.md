@@ -25,7 +25,7 @@ Suppose that we have a process that generates Vega graphics, such as [PdVega](ht
 
 this `stocks.vgplot.line().spec` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
 
-Import `vegascope` and create a `LocalCanvas`. It prompts you with a URL to copy into your web browser. Once that is loaded, 
+Import `vegascope` and create a `LocalCanvas`. It prompts you with a URL to copy into your web browser. Every time the canvas is called as a function on a Vega graphic, the web page will be updated with the latest plot. There is no need to refresh your browser.
 
 ```python
 >>> import vegascope
@@ -37,3 +37,33 @@ Point web browser at: http://localhost:40142
 ```
 
 ![](example.png)
+
+PdVega was only used as an example; the graphic could have come from anywhere. It could be a URL string:
+
+```python
+>>> canvas("https://vega.github.io/vega/examples/stacked-bar-chart.vg.json")
+```
+
+Or a JSON string:
+
+```python
+>>> graphic = """{
+...   "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+...   "description": "A simple bar chart with embedded data.",
+...   "data": {
+...     "values": [
+...       {"a": "A","b": 28}, {"a": "B","b": 55}, {"a": "C","b": 43},
+...       {"a": "D","b": 91}, {"a": "E","b": 81}, {"a": "F","b": 53},
+...       {"a": "G","b": 19}, {"a": "H","b": 87}, {"a": "I","b": 52}
+...     ]
+...   },
+...   "mark": "bar",
+...   "encoding": {
+...     "x": {"field": "a", "type": "ordinal"},
+...     "y": {"field": "b", "type": "quantitative"}
+...   }
+... }"""
+>>> canvas(graphic)
+```
+
+Or a JSON object as nested Python dicts.
