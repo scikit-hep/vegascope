@@ -253,6 +253,13 @@ class Canvas(object):
         if not self.closed:
             self.close()
 
+    def __enter__(self, *args, **kwds):
+        return self
+
+    def __exit__(self, *args, **kwds):
+        if not self.closed:
+            self.close()
+
     @property
     def connect(self):
         return "Web browser: http://{0}:{1}".format(self.ip, self._port)
