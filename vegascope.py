@@ -97,7 +97,7 @@ class Canvas(object):
                     client = self.client_address[0]
                     canvas._connected.add(client)
                     if canvas.verbose:
-                        sys.stdout.write("{0} (re)joined\n".format(client))
+                        sys.stdout.write("{0} joined\n".format(client))
                         sys.stdout.flush()
 
                     title = canvas._title
@@ -308,12 +308,14 @@ Canvas._template = u"""
   <body>
     <div style="text-align: center">
       <div style="display: inline-block; text-align: center">
-        <div style="display: inline-block; width: 400px; margin-top: 10px; margin-bottom: 10px;">
-          <button id="png" style="float: left">Save as PNG</button>
+        <div style="display: inline-block; width: 500px; margin-top: 10px; margin-bottom: 10px;">
+          <button id="png" style="float: left; margin-right: 5px">Save as PNG</button>
+          <button id="svg" style="float: left">as SVG</button>
           <button id="plus">+</button>
           <input  id="zoom" type="text" value="100" size="4" style="text-align: right">%
           <button id="minus">\u2212</button>
-          <button id="svg" style="float: right">Save as SVG</button>
+          <button id="editor" style="float: right; margin-left: 5px">in editor</button>
+          <button id="source" style="float: right">View source</button>
         </div>
 
         <div id="viewer" style="transform: scale(1.0); transform-origin: 50% 0%">
@@ -321,7 +323,7 @@ Canvas._template = u"""
         </div>
       </div>
     </div>
-    <div id="screen" style="position: fixed; padding: 0; margin: 0; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.0);"></div>
+    <div id="screen" style="position: fixed; padding: 0; margin: 0; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: rgba(255, 255, 255, 0.0);"></div>
     <script type="text/javascript">
 
 function setzoom() {
@@ -351,14 +353,27 @@ document.getElementById("zoom").addEventListener("keyup", function(event) {
 });
 
 var title = document.getElementById("title").innerHTML;
+var spec;
 var view;
+var mode;
 
-function setspec(spec) {
-    vegaEmbed("VEGAVIEW", spec, {
+function setspec(x) {
+    spec = x;
+    vegaEmbed("VEGAVIEW", x, {
         renderer: "svg",
         actions: false
     }).then(function(x) {
         view = x.view;
+        var s = x.spec.$schema.split("/")
+        if (s.indexOf("vega") > -1) {
+            mode = "vega";
+        }
+        else if (s.indexOf("vega-lite") > -1) {
+            mode = "vega-lite";
+        }
+        else {
+            mode = "unknown";
+        }
     });
 }
 
@@ -382,6 +397,38 @@ document.getElementById("svg").addEventListener("click", function(event) {
         link.setAttribute("download", title + ".svg");
         link.dispatchEvent(new MouseEvent("click"));
     }).catch(function(error) { alert(error); });
+});
+
+document.getElementById("source").addEventListener("click", function(event) {
+    var w = window.open("");
+    w.document.write("<html><head><title>" + title + ' (source)</title></head><body><pre><code class="json">' + JSON.stringify(spec, null, 2) + "</code></body></html>");
+});
+
+document.getElementById("editor").addEventListener("click", function(event) {
+    var w = window.open("https://vega.github.io/editor");
+    var wait = 10000;
+    var step = 250;
+    var count = ~~(wait / step);
+
+    function listen(event) {
+        if (event.source == w) {
+            count = 0;
+            window.removeEventListener("message", listen, false);
+        }
+    }
+    window.addEventListener("message", listen, false);
+
+    var specstring = JSON.stringify(spec, null, 2);
+
+    function send() {
+        if (count <= 0) {
+            return;
+        }
+        w.postMessage({"mode": mode, "spec": specstring}, "*");
+        setTimeout(send, step);
+        count -= 1;
+    }
+    setTimeout(send, step);
 });
 
 var eventSource = new EventSource("/update");
