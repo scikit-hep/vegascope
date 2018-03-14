@@ -33,3 +33,5 @@ Point web browser at: http://localhost:40142
 
 >>> c(stocks.vgplot.line().spec)
 ```
+
+![](example.png)
