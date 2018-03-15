@@ -1,0 +1,28 @@
+language: python
+
+os:
+  - linux
+
+python:
+  - 2.7
+
+addons:
+  apt:
+    packages:
+      - python-setuptools
+
+install:
+  - pip install --upgrade pip
+  - pip install --upgrade setuptools_scm
+
+script:
+  echo "no tests"
+
+deploy:
+  provider: pypi
+  user: pivarski
+  password:
+    secure: ""
+  on:
+    tags: true
+    branch: master

@@ -31,6 +31,7 @@
 import errno
 import getpass
 import json
+import re
 import socket
 import sys
 import threading
@@ -48,6 +49,10 @@ else:
     from urllib.request import urlopen
     from urllib.parse import urlparse
     unicode = str
+
+__version__ = "1.0.0"
+version = __version__
+version_info = tuple(re.split(r"[-\.]", __version__))
 
 class Canvas(object):
     """A general Vega canvas that can be viewed anywhere on the internet.
