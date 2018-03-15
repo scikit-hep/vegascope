@@ -506,7 +506,7 @@ function setspec(x) {
         else {
             mode = "unknown";
         }
-    });
+    }).catch(function(error) { alert(error); });
 }
 
 setspec(SPEC);
