@@ -36,6 +36,7 @@ import socket
 import sys
 import threading
 import time
+import webbrowser
 
 if sys.version_info[0] < 3:
     import SimpleHTTPServer
@@ -50,7 +51,7 @@ else:
     from urllib.parse import urlparse
     unicode = str
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 version = __version__
 version_info = tuple(re.split(r"[-\.]", __version__))
 
@@ -199,6 +200,9 @@ class Canvas(object):
         self.verbose = verbose
         self._connected = set()
 
+        self._launch()
+
+    def _launch(self):
         if self.verbose:
             self.how()
 
@@ -344,8 +348,15 @@ class LocalCanvas(Canvas):
     """
     __doc__ += "\n".join(Canvas.__doc__.split("\n")[1:])
 
-    def __init__(self, title=None, initial=None, port=0):
+    def __init__(self, title=None, initial=None, port=0, newtab=True):
+        self._newtab = newtab
         super(LocalCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port)
+
+    def _launch(self):
+        if self.verbose and not self._newtab:
+            self.how()
+        if self._newtab:
+            webbrowser.open_new_tab(self.connection["browser"])
 
     @property
     def ip(self):

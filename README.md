@@ -34,13 +34,18 @@ pe': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'color': {'fie
 
 This `stocks.vgplot.line().spec` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
 
-Import `vegascope` and create a `LocalCanvas`. It prompts you with a URL to copy into your web browser. Every time the canvas is called as a function on a Vega graphic, the web page will be updated with the latest plot. There is no need to refresh your browser.
+Import `vegascope` and create a `LocalCanvas`. It opens a tab in your web browser (**hint:** check other desktops or create a browser window in the current desktop first!) for drawing Vega graphics.
+
+Every time the canvas is called as a function on a Vega graphic, the web page will be updated with the latest plot. There is no need to refresh your browser.
 
 ```python
 >>> import vegascope
 >>> canvas = vegascope.LocalCanvas()
-Point web browser at: http://localhost:40142
+Created new window in existing browser session.
 127.0.0.1 connected
+
+>>> canvas.how()
+Point web browser at: http://localhost:40142
 
 >>> canvas(stocks.vgplot.line().spec)
 ```
