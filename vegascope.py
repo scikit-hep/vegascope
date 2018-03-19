@@ -51,7 +51,7 @@ else:
     from urllib.parse import urlparse
     unicode = str
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 version = __version__
 version_info = tuple(re.split(r"[-\.]", __version__))
 
@@ -272,9 +272,9 @@ class Canvas(object):
                 if isinstance(spec, (unicode, str)):
                     p = urlparse(spec)
                     if p.scheme != "":
-                        self._spec = json.dumps(spec)                # spec is a URL; wrap it with quotes for JSON
+                        self._spec = json.dumps(spec)                                 # spec is a URL; wrap it with quotes for JSON
                     else:
-                        self._spec = json.dumps(json.loads(spec))    # not a URL; ensure that it's JSON and a one-liner
+                        self._spec = json.dumps(json.loads(spec), allow_nan=False)    # not a URL; ensure that it's JSON and a one-liner
                 else:
                     # PdVega
                     if spec.__class__.__module__.startswith("pdvega") and hasattr(spec, "spec"):
@@ -283,7 +283,7 @@ class Canvas(object):
                     elif hasattr(spec, "to_json") and callable(spec.to_json):
                         spec = json.loads(spec.to_json())
 
-                    self._spec = json.dumps(spec)                    # spec is an object; encode it as JSON
+                    self._spec = json.dumps(spec, allow_nan=False)                    # spec is an object; encode it as JSON
 
             if action is not None:
                 self._action = action
