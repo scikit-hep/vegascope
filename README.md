@@ -1,8 +1,6 @@
 VegaScope
 =========
 
-![](logo200.png)
-
 VegaScope is a minimal viewer of [Vega](https://vega.github.io/vega/) and [Vega-Lite](https://vega.github.io/vega-lite/) graphics from Python. The Python process generating the graphics does not need to be on the same machine as the web browser viewing them.
 
 VegaScope has zero dependencies and can be installed as a single file.
