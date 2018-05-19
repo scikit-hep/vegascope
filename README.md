@@ -3,7 +3,7 @@ VegaScope
 
 VegaScope is a minimal viewer of [Vega](https://vega.github.io/vega/) and [Vega-Lite](https://vega.github.io/vega-lite/) graphics from Python. The Python process generating the graphics does not need to be on the same machine as the web browser viewing them.
 
-VegaScope has zero dependencies and can be installed as a single file.
+VegaScope has zero dependencies and can be installed as a single file. It can be used as a Python library or as a shell command, watching a file or stdin.
 
 ```bash
 pip install vegascope
@@ -141,3 +141,39 @@ Point web browser at: http://localhost:43213
 The TunnelCanvas is only available locally, but you can extend the meaning of "local" through an ssh tunnel. Assuming that you're already connected to the remote machine through one ssh terminal, open another terminal and paste the new ssh command into it. As long as that second terminal is open, your local web browser will see `http://localhost:43213` as the remote one.
 
 Whereas `vegascope.Canvas` is world-readable, `vegascope.TunnelCanvas` is as safe as ssh. Choose the option that best fits your security constraints.
+
+As a shell command
+------------------
+
+If it's more convenient to use VegaScope as a separate process, it can run as a shell command, watching a file for changes or stdin. All of the options are available as command line switches:
+
+```bash
+usage: vegascope.py [-h] [-w WAIT] [-t {Canvas,LocalCanvas,TunnelCanvas}]
+                    [-T TITLE] [-b HOST] [-p PORT] [-q] [-Q]
+                    [FILE]
+
+VegaScope can be used within Python (import vegascope) or a shell command.
+
+positional arguments:
+  FILE                  file to watch for changes; default is '-' for lines on
+                        stdin (stdin requires one JSON object per line)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -w WAIT, --wait WAIT  poll wait time in seconds; default is 0.1 (100 ms);
+                        not applicable to stdin
+  -t {Canvas,LocalCanvas,TunnelCanvas}, --type {Canvas,LocalCanvas,TunnelCanvas}
+                        type of Canvas; default is LocalCanvas
+  -T TITLE, --title TITLE
+                        browser window title and saved file name prefix
+  -b HOST, --host HOST  host name to bind to; default is 0.0.0.0 for any
+                        address (not applicable to LocalCanvas or
+                        TunnelVanvas)
+  -p PORT, --port PORT  port to bind to; default is 0 for any open port
+  -q, --no-verbose      if supplied, do not log output to stdout (opposite of
+                        verbose)
+  -Q, --no-newtab       if supplied, do not open a browser window (opposite of
+                        newtab, only applicable to LocalCanvas)
+```
+
+In file-watching mode, the canvas will update when the file is overwritten. In stdin-watching mode, the canvas will update when a one-line JSON document is passed to stdin.
