@@ -147,7 +147,7 @@ As a shell command
 
 If it's more convenient to use VegaScope as a separate process, it can run as a shell command, watching a file for changes or stdin. All of the options are available as command line switches:
 
-```bash
+```
 usage: vegascope.py [-h] [-w WAIT] [-t {Canvas,LocalCanvas,TunnelCanvas}]
                     [-T TITLE] [-b HOST] [-p PORT] [-q] [-Q]
                     [FILE]
