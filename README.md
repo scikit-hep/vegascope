@@ -5,11 +5,13 @@ VegaScope is a minimal viewer of [Vega](https://vega.github.io/vega/) and [Vega-
 
 VegaScope has zero dependencies and can be installed as a single file. It can be used as a Python library or as a shell command, watching a file or stdin.
 
+To install, simply
+
 ```bash
 pip install vegascope
 ```
 
-or copy [vegascope.py](https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py) to the desired location.
+(with `--user` if not superuser) or copy [vegascope.py](https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py) to the desired location.
 
 Example
 -------
