@@ -11,7 +11,7 @@ To install, simply
 pip install vegascope
 ```
 
-(with `--user` if not superuser) or copy [vegascope.py](https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py) to the desired location.
+(with `--user` if not superuser) or copy the single [vegascope.py](https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py) file to the desired location.
 
 Example
 -------
