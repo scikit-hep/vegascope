@@ -49,7 +49,7 @@ To install, simply
 
     pip install vegascope
 
-(with ``--user`` if not superuser) or copy the single `vegascope.py <https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py>` file to the desired location.
+(with ``--user`` if not superuser) or copy the single `vegascope.py <https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py>`_ file to the desired location.
 
 See `https://github.com/diana-hep/vegascope <https://github.com/diana-hep/vegascope>`_ for examples and documentation.""",
       author = "Jim Pivarski (DIANA-HEP)",
