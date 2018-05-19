@@ -46,6 +46,7 @@ VegaScope has zero dependencies and can be installed as a single file. It can be
 To install, simply
 
 .. code-block:: bash
+
     pip install vegascope
 
 (with ``--user`` if not superuser) or copy the single `vegascope.py <https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py>` file to the desired location.
