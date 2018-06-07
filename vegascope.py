@@ -378,6 +378,26 @@ class TunnelCanvas(Canvas):
         return {"terminal": "ssh -L {port}:localhost:{port} {user}@{ip}".format(port=self._port, user=getpass.getuser(), ip=self.ip),
                 "browser": "http://localhost:{port}".format(port=self._port)}
 
+
+# This is the global canvas instance used by entrypoint-based renderers
+_entrypoint_renderer_canvas = None
+
+
+def _vegalite_renderer_entry_point(spec, embed_options=None):
+    global _entrypoint_renderer_canvas
+
+    if embed_options is not None:
+        import warnings
+        warnings.warn("embed_options is not yet supported & will be ignored")
+
+    if _entrypoint_renderer_canvas is None:
+        _entrypoint_renderer_canvas = LocalCanvas()
+
+    _entrypoint_renderer_canvas(spec)
+    browser = _entrypoint_renderer_canvas.connection['browser']
+    return {'text/plain': 'Rendered at {0}'.format(browser)}
+
+
 Canvas._default = {
   "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
   "data": {"values": [{"x": "plot goes here"}]},

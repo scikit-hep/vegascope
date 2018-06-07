@@ -60,6 +60,7 @@ See `https://github.com/diana-hep/vegascope <https://github.com/diana-hep/vegasc
       download_url = "https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py",
       license = "BSD 3-clause",
       install_requires = [],
+      entry_points = {'altair.vegalite.v2.renderer': ['vegascope=vegascope:_vegalite_renderer_entry_point']},
       classifiers = [
           "Development Status :: 5 - Production/Stable",
           "Intended Audience :: Developers",
