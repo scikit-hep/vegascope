@@ -187,6 +187,7 @@ class Canvas(object):
                 pass
 
         self._httpd = SocketServer.ThreadingTCPServer((host, port), HTTPHandler)
+        self._httpd.daemon_threads = True
         self._host, self._port = self._httpd.server_address
 
         self._thread = threading.Thread(name=self._title, target=self._httpd.serve_forever)
@@ -378,10 +379,8 @@ class TunnelCanvas(Canvas):
         return {"terminal": "ssh -L {port}:localhost:{port} {user}@{ip}".format(port=self._port, user=getpass.getuser(), ip=self.ip),
                 "browser": "http://localhost:{port}".format(port=self._port)}
 
-
 # This is the global canvas instance used by entrypoint-based renderers
 _entrypoint_renderer_canvas = None
-
 
 def _vegalite_renderer_entry_point(spec, embed_options=None):
     global _entrypoint_renderer_canvas
@@ -396,7 +395,6 @@ def _vegalite_renderer_entry_point(spec, embed_options=None):
     _entrypoint_renderer_canvas(spec)
     browser = _entrypoint_renderer_canvas.connection['browser']
     return {'text/plain': 'Rendered at {0}'.format(browser)}
-
 
 Canvas._default = {
   "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
