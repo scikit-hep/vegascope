@@ -53,7 +53,7 @@ else:
     from urllib.parse import urlparse
     unicode = str
 
-__version__ = "1.0.8"
+__version__ = "1.0.9"
 version = __version__
 version_info = tuple(re.split(r"[-\.]", __version__))
 

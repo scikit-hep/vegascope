@@ -1,4 +1,4 @@
-.. image:: logo-300px.png
+.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/docs/source/logo-300px.png
    :alt: VegaScope
    :target: https://github.com/diana-hep/vegascope
 
@@ -31,10 +31,11 @@ Suppose that we have a process that generates Vega graphics, such as `PdVega <ht
 
 .. code-block::
 
-    {'selection': {'grid': {'bind': 'scales', 'type': 'interval'}}, 'encoding': {'y': {'field': 'value', 'ty
-    pe': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'color': {'field': 'variable', 'type':
-     'nominal'}}, 'height': 300, 'width': 450, '$schema': 'https://vega.github.io/schema/vega-lite/v2.json',
-     'mark': 'line', 'data': {'values': [{'date': '2000-01-01', 'variable': 'AAPL', 'value': 25.94}, {'date'
+    {'selection': {'grid': {'bind': 'scales', 'type': 'interval'}}, 'encoding': {'y': {'fie
+    ld': 'value', 'type': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'col
+    or': {'field': 'variable', 'type': 'nominal'}}, 'height': 300, 'width': 450, '$schema':
+    'https://vega.github.io/schema/vega-lite/v2.json', 'mark': 'line', 'data': {'values': [
+    {'date': '2000-01-01', 'variable': 'AAPL', 'value': 25.94}, {'date': '2000-01-02', 'var
     ...
 
 This ``stocks.vgplot.line().spec`` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
@@ -55,7 +56,7 @@ Every time the canvas is called as a function on a Vega graphic, the web page wi
 
     >>> canvas(stocks.vgplot.line().spec)
 
-.. image:: example.png
+.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/docs/source/example.png
 
 PdVega was only used as an example; the graphic could have come from anywhere. It could be a URL string:
 
