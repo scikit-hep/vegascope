@@ -144,6 +144,13 @@ The TunnelCanvas is only available locally, but you can extend the meaning of "l
 
 Whereas `vegascope.Canvas` is world-readable, `vegascope.TunnelCanvas` is as safe as ssh. Choose the option that best fits your security constraints.
 
+Vega version
+------------
+
+VegaScope instructs your web browser to use a recent [Vega](https://github.com/vega/vega/releases), [Vega-Lite](https://github.com/vega/vega-lite/releases), and [Vega-Embed](https://github.com/vega/vega-embed/releases) version from cdn.jsdelivr.net. If you'd like a different version, you can specify `vega="3.3.1"`, `vegalite="2.5.2"`, `vegaembed="3.15.0"` in any Canvas constructor.
+
+Passing `None` or an empty string uses a standalone version embedded within the vegascope.py file. This is useful if your computer (specifically, the one your web browser is running on) is disconnected from the internet.
+
 As a shell command
 ------------------
 
@@ -151,7 +158,8 @@ If it's more convenient to use VegaScope as a separate process, it can run as a 
 
 ```
 usage: vegascope.py [-h] [-w WAIT] [-t {Canvas,LocalCanvas,TunnelCanvas}]
-                    [-T TITLE] [-b HOST] [-p PORT] [-q] [-Q]
+                    [-T TITLE] [-b HOST] [-p PORT] [-q] [-Q] [--vega VERSION]
+                    [--vega-lite VERSION] [--vega-embed VERSION]
                     [FILE]
 
 VegaScope can be used within Python (import vegascope) or a shell command.
@@ -176,6 +184,12 @@ optional arguments:
                         verbose)
   -Q, --no-newtab       if supplied, do not open a browser window (opposite of
                         newtab, only applicable to LocalCanvas)
+  --vega VERSION        Vega version to request from cdn.jsdelivr.net or "" to
+                        use an standalone copy.
+  --vega-lite VERSION   Vega-Lite version to request from cdn.jsdelivr.net or
+                        "" to use an standalone copy.
+  --vega-embed VERSION  Vega-Embed version to request from cdn.jsdelivr.net or
+                        "" to use an standalone copy.
 ```
 
 In file-watching mode, the canvas will update when the file is overwritten. In stdin-watching mode, the canvas will update when a one-line JSON document is passed to stdin.
