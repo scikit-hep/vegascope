@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/docs/source/logo-300px.png
+.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/logo-300px.png
    :alt: VegaScope
    :target: https://github.com/diana-hep/vegascope
 
@@ -56,7 +56,7 @@ Every time the canvas is called as a function on a Vega graphic, the web page wi
 
     >>> canvas(stocks.vgplot.line().spec)
 
-.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/docs/source/example.png
+.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/example.png
 
 PdVega was only used as an example; the graphic could have come from anywhere. It could be a URL string:
 
