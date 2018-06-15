@@ -35,23 +35,16 @@ def get_version():
     exec(open("vegascope.py").read(), g)
     return g["__version__"]
 
+def get_description():
+    return open("README.rst", "rb").read().decode("utf8", "ignore").strip()
+
 setup(name="vegascope",
       version = get_version(),
       py_modules=["vegascope"],
+      scripts = ["vegascope.py"],
+      data_files = ["README.rst"],
       description = "View Vega/Vega-Lite plots in your web browser from local or remote Python processes.",
-      long_description = """VegaScope is a minimal viewer of `Vega <https://vega.github.io/vega/>`_ and `Vega-Lite <https://vega.github.io/vega-lite/>`_ graphics from Python. The Python process generating the graphics does not need to be on the same machine as the web browser viewing them.
-
-VegaScope has zero dependencies and can be installed as a single file. It can be used as a Python library or as a shell command, watching a file or stdin.
-
-To install, simply
-
-.. code-block:: bash
-
-    pip install vegascope
-
-(with ``--user`` if not superuser) or copy the single `vegascope.py <https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py>`_ file to the desired location.
-
-See `https://github.com/diana-hep/vegascope <https://github.com/diana-hep/vegascope>`_ for examples and documentation.""",
+      long_description = get_description(),
       author = "Jim Pivarski (DIANA-HEP)",
       author_email = "pivarski@fnal.gov",
       maintainer = "Jim Pivarski (DIANA-HEP)",
