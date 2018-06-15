@@ -31,11 +31,11 @@ Suppose that we have a process that generates Vega graphics, such as `PdVega <ht
 
 .. code-block::
 
-    {'selection': {'grid': {'bind': 'scales', 'type': 'interval'}}, 'encoding': {'y': {'fie
-    ld': 'value', 'type': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'col
-    or': {'field': 'variable', 'type': 'nominal'}}, 'height': 300, 'width': 450, '$schema':
-    'https://vega.github.io/schema/vega-lite/v2.json', 'mark': 'line', 'data': {'values': [
-    {'date': '2000-01-01', 'variable': 'AAPL', 'value': 25.94}, {'date': '2000-01-02', 'var
+    {'selection': {'grid': {'bind': 'scales', 'type': 'interval'}}, 'encoding': {'y': {'fi
+    eld': 'value', 'type': 'quantitative'}, 'x': {'field': 'date', 'type': 'temporal'}, 'c
+    olor': {'field': 'variable', 'type': 'nominal'}}, 'height': 300, 'width': 450, '$schem
+    a': 'https://vega.github.io/schema/vega-lite/v2.json', 'mark': 'line', 'data': {'value
+    s': [{'date': '2000-01-01', 'variable': 'AAPL', 'value': 25.94}, {'date': '2000-01-02'
     ...
 
 This ``stocks.vgplot.line().spec`` is a JSON object representing a timeseries of stock prices. It is too complicated to read manually.
@@ -56,7 +56,11 @@ Every time the canvas is called as a function on a Vega graphic, the web page wi
 
     >>> canvas(stocks.vgplot.line().spec)
 
+|
+
 .. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/example.png
+
+|
 
 PdVega was only used as an example; the graphic could have come from anywhere. It could be a URL string:
 
@@ -154,7 +158,7 @@ Whereas ``vegascope.Canvas`` is world-readable, ``vegascope.TunnelCanvas`` is as
 Vega version
 ------------
 
-VegaScope instructs your web browser to use a recent `Vega <https://github.com/vega/vega/releases>`__, `Vega-Lite <https://github.com/vega/vega-lite/releases>`__, and `Vega-Embed <https://github.com/vega/vega-embed/releases>`__ version from cdn.jsdelivr.net. If you'd like a different version, you can specify ``vega="3.3.1"``, ``vegalite="2.5.2"``, ``vegaembed="3.15.0"`` in any Canvas constructor.
+VegaScope instructs your web browser to use a recent `Vega <https://github.com/vega/vega/releases>`__, `Vega-Lite <https://github.com/vega/vega-lite/releases>`__, and `Vega-Embed <https://github.com/vega/vega-embed/releases>`__ version from cdn.jsdelivr.net. If you'd like a different version, you can specify ``vega="3.3.1"``, ``vegalite="2.5.2"``, ``vegaembed="3.15.0"`` in any ``Canvas`` constructor.
 
 Passing ``None`` or an empty string uses a standalone version embedded within the vegascope.py file. This is useful if your computer (specifically, the one your web browser is running on) is disconnected from the internet.
 
