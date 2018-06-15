@@ -93,11 +93,11 @@ Interactive features
 
 In addition to any interactivity the Vega graphic may have on its own, VegaScope has five interactive features:
 
-   - **Save as PNG:** create a PNG image in your downloads folder (file name is the current title + ``.png``).
-   - **Save as SVG:** create a SVG image in your downloads folder (ending in ``.svg``). SVG files can be edited as vector graphics (you can move the data points around, add annotations) and converted losslessly to sharp PDFs. My favorite tool for editing SVG and converting to PDF is `Inkscape <https://inkscape.org/>`__.
-   - **Zoom buttons/box:** scale the graphic on the web page. Does not affect saved file size.
-   - **View source:** to see the raw JSON.
-   - **View in editor:** to edit and view the graphic in the official `Vega editor <https://vega.github.io/editor>`__. This editor gives you a lot of insight into how Vega declarations translate into graphics, but it's not optimal for rapid-fire plotting.
+- **Save as PNG:** create a PNG image in your downloads folder (file name is the current title + ``.png``).
+- **Save as SVG:** create a SVG image in your downloads folder (ending in ``.svg``). SVG files can be edited as vector graphics (you can move the data points around, add annotations) and converted losslessly to sharp PDFs. My favorite tool for editing SVG and converting to PDF is `Inkscape <https://inkscape.org/>`__.
+- **Zoom buttons/box:** scale the graphic on the web page. Does not affect saved file size.
+- **View source:** to see the raw JSON.
+- **View in editor:** to edit and view the graphic in the official `Vega editor <https://vega.github.io/editor>`__. This editor gives you a lot of insight into how Vega declarations translate into graphics, but it's not optimal for rapid-fire plotting.
 
 Saving images from a script
 ---------------------------
