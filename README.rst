@@ -1,6 +1,6 @@
-.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/logo-300px.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/vegascope/master/logo-300px.png
    :alt: VegaScope
-   :target: https://github.com/diana-hep/vegascope
+   :target: https://github.com/scikit-hep/vegascope
 
 |
 
@@ -14,7 +14,7 @@ To install, simply
 
     pip install vegascope
 
-(with ``--user`` if not superuser) or copy the single `vegascope.py <https://raw.githubusercontent.com/diana-hep/vegascope/master/vegascope.py>`__ file to the desired location.
+(with ``--user`` if not superuser) or copy the single `vegascope.py <https://raw.githubusercontent.com/scikit-hep/vegascope/master/vegascope.py>`__ file to the desired location.
 
 Example
 -------
@@ -58,7 +58,7 @@ Every time the canvas is called as a function on a Vega graphic, the web page wi
 
 |
 
-.. image:: https://raw.githubusercontent.com/diana-hep/vegascope/master/example.png
+.. image:: https://raw.githubusercontent.com/scikit-hep/vegascope/master/example.png
 
 |
 
