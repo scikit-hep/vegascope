@@ -53,7 +53,7 @@ else:
     from urllib.parse import urlparse
     unicode = str
 
-__version__ = "1.0.13"
+__version__ = "1.0.14"
 version = __version__
 version_info = tuple(re.split(r"[-\.]", __version__))
 
@@ -83,7 +83,7 @@ class Canvas(object):
         closed (boolean): True if the server has shut down, False otherwise.
     """
 
-    def __init__(self, title=None, initial=None, host="0.0.0.0", port=0, verbose=True, vega="3.3.1", vegalite="2.5.2", vegaembed="3.15.0"):
+    def __init__(self, title=None, initial=None, host="0.0.0.0", port=0, verbose=True, vega="5.4.0", vegalite="3.3.0", vegaembed="4.2.0"):
         self._lock = threading.Lock()
 
         if title is None:
@@ -370,7 +370,7 @@ class LocalCanvas(Canvas):
     """
     __doc__ += "\n".join(Canvas.__doc__.split("\n")[1:])
 
-    def __init__(self, title=None, initial=None, port=0, verbose=True, newtab=True, vega="3.3.1", vegalite="2.5.2", vegaembed="3.15.0"):
+    def __init__(self, title=None, initial=None, port=0, verbose=True, newtab=True, vega="5.4.0", vegalite="3.3.0", vegaembed="4.2.0"):
         self._newtab = newtab
         super(LocalCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port, verbose=verbose, vega=vega, vegalite=vegalite, vegaembed=vegaembed)
 
@@ -389,7 +389,7 @@ class TunnelCanvas(Canvas):
     """
     __doc__ += "\n".join(Canvas.__doc__.split("\n")[1:])
 
-    def __init__(self, title=None, initial=None, port=0, verbose=True, vega="3.3.1", vegalite="2.5.2", vegaembed="3.15.0"):
+    def __init__(self, title=None, initial=None, port=0, verbose=True, vega="5.4.0", vegalite="3.3.0", vegaembed="4.2.0"):
         super(TunnelCanvas, self).__init__(title=title, initial=initial, host="localhost", port=port, verbose=verbose, vega=vega, vegalite=vegalite, vegaembed=vegaembed)
 
     @property
