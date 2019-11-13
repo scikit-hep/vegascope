@@ -401,6 +401,7 @@ class TunnelCanvas(Canvas):
 _entrypoint_renderer_canvas = None
 
 def _vegalite_renderer_entry_point(spec, embed_options=None):
+    import altair
     global _entrypoint_renderer_canvas
 
     if embed_options is not None:
@@ -408,7 +409,7 @@ def _vegalite_renderer_entry_point(spec, embed_options=None):
         warnings.warn("embed_options is not yet supported & will be ignored")
 
     if _entrypoint_renderer_canvas is None:
-        _entrypoint_renderer_canvas = LocalCanvas()
+        _entrypoint_renderer_canvas = LocalCanvas(vegalite=altair.VEGALITE_VERSION)
 
     _entrypoint_renderer_canvas(spec)
     browser = _entrypoint_renderer_canvas.connection['browser']
