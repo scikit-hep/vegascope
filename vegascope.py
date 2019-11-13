@@ -409,7 +409,7 @@ def _vegalite_renderer_entry_point(spec, embed_options=None):
         warnings.warn("embed_options is not yet supported & will be ignored")
 
     if _entrypoint_renderer_canvas is None:
-        _entrypoint_renderer_canvas = LocalCanvas(vegalite=altair.VEGALITE_VERSION)
+        _entrypoint_renderer_canvas = LocalCanvas(vega=altair.VEGA_VERSION, vegalite=altair.VEGALITE_VERSION, vegaembed=altair.VEGAEMBED_VERSION)
 
     _entrypoint_renderer_canvas(spec)
     browser = _entrypoint_renderer_canvas.connection['browser']
